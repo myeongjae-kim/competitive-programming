@@ -1,4 +1,3 @@
-g++ -std=c++11 -O2 a.cc;
+g++ -std=c++11 -g a.cc;
 ./a.out < input > myoutput
 diff output myoutput
-rm a.out

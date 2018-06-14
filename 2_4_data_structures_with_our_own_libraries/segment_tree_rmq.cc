@@ -1,6 +1,7 @@
 // range minimum query
 #include <cstdio>
 #include <vector>
+#include <cassert>
 
 using namespace std;
 
@@ -55,6 +56,22 @@ private:
     st[p] = (A[st[left(p)]] < A[st[right(p)]]) ? st[left(p)] : st[right(p)];
   }
 
+  void update_range(int p, int L, int R, int i, int j) {
+    // base case
+    if(L == R) {
+      return;
+    }
+
+    if(R < i || L > j) {
+      return;
+    } 
+
+    update_range(left(p), L, (L+R)/2, i,j);
+    update_range(right(p), (L+R)/2 + 1, R, i,j);
+
+    st[p] = A[st[left(p)]] < A[st[right(p)]] ? st[left(p)] : st[right(p)];
+  }
+
 public:
   SegmentTree(const vi &_A) {
     A = _A;
@@ -67,6 +84,26 @@ public:
     A[i] = value;
     update(1, 0, n-1, i); 
   }
+
+  void update_range(int i, int j, const vi & new_values) {
+    assert((j-i+1) == (int)new_values.size());
+
+    // update A
+    for(int k = i; k <= j; k++) {
+      A[k] = new_values[k-i];
+    }
+
+    // update segment tree
+    update_range(1, 0, n-1, i, j);
+  }
+
+   void print_arr() {
+    for(auto i : A) {
+      printf("%d ", i);
+    }
+    putchar('\n');
+   }
+
 };
 
 int main(void) {
@@ -95,6 +132,20 @@ int main(void) {
   printf("RMQ(0, 6) = %d\n", st.rmq(0, 6));                         // 5->2
   printf("RMQ(4, 6) = %d\n", st.rmq(4, 6));                         // 5->4
   printf("RMQ(4, 5) = %d\n", st.rmq(4, 5));                         // 5->4
+
+  st.update_range(1, 3, {1, 2, 3});
+
+  printf("              idx   0 1 2 3  4   5  6\n");
+  //printf("            A is 18 1 2 3 15 100 20\n");
+  printf("              A is ");
+  st.print_arr();
+
+  printf("RMQ(1, 3) = %d\n", st.rmq(1, 3));             // answer = index 1
+  printf("RMQ(4, 6) = %d\n", st.rmq(4, 6));             // answer = index 4
+  printf("RMQ(3, 4) = %d\n", st.rmq(3, 4));             // answer = index 3
+  printf("RMQ(0, 0) = %d\n", st.rmq(0, 0));             // answer = index 0
+  printf("RMQ(0, 1) = %d\n", st.rmq(0, 1));             // answer = index 1
+  printf("RMQ(0, 6) = %d\n", st.rmq(0, 6));             // answer = index 1
 
   return 0;
 }

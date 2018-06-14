@@ -1,6 +1,7 @@
 // Range sum queries
 #include <cstdio>
 #include <vector>
+#include <cassert>
 
 using namespace std;
 
@@ -54,6 +55,24 @@ private:
     return st[left(p/2)] + st[right(p/2)];
   }
 
+  void update_range(int p, int L, int R, int i, int j) {
+    // base case
+    if(L == R) {
+      st[p] = A[L];
+      return;
+    }
+
+    // out of updating range
+    if(R < i || L > j) {
+      return;
+    }
+
+    update_range(left(p), L, (L+R)/2, i, j);
+    update_range(right(p), (L+R)/2 + 1, R, i, j);
+
+    st[p] = st[left(p)] + st[right(p)];
+  }
+
 public:
   SegmentTree(const vi &_A) {
     A = _A;
@@ -66,6 +85,15 @@ public:
     A[i] = value;
     update(1, 0, n-1, i);
   }
+  void update_range(int i, int j, vi new_numbers) {
+    assert(j-i+1 == (int)new_numbers.size());
+    for(int k=i; k <= j; k++) {
+      A[k] = new_numbers[k-i];
+    }
+
+    update_range(1, 0, n-1, i, j);
+  }
+
 };
 
 int main(void)
@@ -79,6 +107,11 @@ int main(void)
   st.update(4, 17);
   printf("rsq(1, 7) = %d\n", st.rsq(1, 7)); // 177
   printf("rsq(3, 8) = %d\n", st.rsq(3, 8)); // 149
+
+  st.update_range(3, 7, {10, 20, 30, 40, 50});
+  // arr[] = { 10, 2, 47, 10, 20, 30, 40, 50, 21 };
+  printf("rsq(1, 7) = %d\n", st.rsq(1, 7)); // 199
+  printf("rsq(3, 8) = %d\n", st.rsq(3, 8)); // 171
 
   return 0;
 }

@@ -31,20 +31,23 @@ int main(void) {
     getline(cin, s); // remove \n
     while(getline(cin, s), s.length()) {
       char cmd; int c1, c2;
+      int s1, s2;
 
       stringstream ss(s);
       ss >> cmd >> c1 >> c2;
 
       switch(cmd) {
         case 'c':
-          if(rank[find(set, c1)] > rank[find(set, c2)]) {
-            set[find(set, c2)] = set[find(set, c1)];
+          s1 = find(set, c1);
+          s2 = find(set, c2);
+          if(rank[s1] > rank[s2]) {
+            set[s2] = set[s1];
           } else {
-            set[find(set, c1)] = set[find(set, c2)];
+            set[s1] = set[s2];
           }
 
-          if(rank[find(set, c1)] == rank[find(set, c2)]) {
-            rank[find(set, c2)]++;
+          if(rank[s1] == rank[s2]) {
+            rank[s2]++;
           }
 
           break;

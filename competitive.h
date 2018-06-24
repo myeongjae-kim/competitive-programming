@@ -33,9 +33,9 @@ using namespace std;
 #define trace5(a, b, c, d, e)
 #define trace6(a, b, c, d, e, f)
 #endif
-typedef long long LL;
-typedef pair<int,int> PII;
-typedef vector<int> VI;
-typedef vector< PII > VPII;
+typedef long long ll;
+typedef pair<int,int> pii;
+typedef vector<int> vi;
+typedef vector< pii > vii;
 
 //ios::sync_with_stdio(0); cin.tie(0);

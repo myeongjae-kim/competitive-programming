@@ -40,41 +40,51 @@ typedef vector< pii > vii;
 
 //ios::sync_with_stdio(0); cin.tie(0);
 
-int m[22];
+int cd[22];
 
 int main(void)
 {
-  int tc; scanf("%d", &tc);
-
-  while(tc--) {
-    int target; scanf("%d", &target);
+  int tape;
+  while(scanf("%d", &tape) != EOF) {
     int n; scanf("%d", &n);
 
-    for(int i = 0; i < n; i++) {
-      scanf("%d", &m[i]);
+    repi(i, n) {
+      scanf("%d", &cd[i]);
     }
 
-    int const dest = 1 << n;
-    bool is_found = false;
+    int dest = 1 << n;
 
+    int ans = INT_MIN;
+    int ans_set;
+    int ans_elem = INT_MIN;
     // i is a subset
-    for(int i = 0; i < dest; i++) {
-      int sum = 0;
+    repi(i, dest) {
       // kth bit
-      for(int k = 0; k < n; k++) {
+      int sum = 0;
+      int elem = 0;
+      repi(k, n) {
         if(i & (1<<k)) {
-          sum += m[k];
+          sum += cd[k];
+          elem++;
         }
       }
+      if(ans <= sum && sum <= tape) {
+        if(sum == ans && elem <= ans_elem)
+          continue;
 
-      if(sum == target) {
-        is_found = true;
-        break;
+        ans = sum;
+        ans_set = i;
+        ans_elem = elem;
       }
     }
 
-    printf("%s\n", is_found ? "YES" : "NO");
+    repi(i, n) {
+      if(ans_set & (1<<i)) {
+        printf("%d ", cd[i]);
+      }
+    }
+    printf("sum:%d\n", ans);
   }
-
+  
   return 0;
 }

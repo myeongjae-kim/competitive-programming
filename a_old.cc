@@ -41,41 +41,38 @@ typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
 int n, m;
-unordered_map<int, int> h;
+int ary[10004];
 
 void sol() {
+  sort(ary, ary+n);
   int diff = INT_MAX;
   int lo, hi;
-  for(auto &p : h) {
-    int cur = p.first;
-    int target = m-cur;
 
-    auto it = h.find(target);
-    if(h.end() == it) {
-      continue;
-    } else {
-      if(cur == target && it->second <= 1)
-        continue;
+  int cur, target;
+  repi(i, n) {
+    cur = ary[i];
+    target = m-cur;
 
-      if(abs(cur-target) < diff) {
-        diff = abs(cur-target);
-        lo = cur < target ? cur : target;
-        hi = cur > target ? cur : target;
-      }
+    auto it = lower_bound(ary+(i+1), ary+n, target);
+
+    if(it != ary+n
+        && cur + *it == m
+        && abs(cur - *it) < diff) {
+      diff = abs(cur - *it);
+      lo = cur; hi = *it;
     }
   }
-
-  printf("Peter should buy books whose prices are %d and %d.\n\n", lo, hi);
+  printf("Peter should buy books where prices are %d and %d.\n\n",
+      lo, hi);
 }
 
 int main(void)
 {
   while(sd(n) != EOF) {
-    h.clear();
+    SET(ary, 0);
+
     repi(i, n) {
-      int p;
-      sd(p);
-      h[p]++;
+      sd(ary[i]);
     }
     sd(m);
 

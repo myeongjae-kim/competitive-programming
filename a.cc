@@ -40,47 +40,54 @@ typedef vector< pii > vii;
 
 //ios::sync_with_stdio(0); cin.tie(0);
 
-int n, m;
-unordered_map<int, int> h;
+double p,q,r,s,t,u;
 
-void sol() {
-  int diff = INT_MAX;
-  int lo, hi;
-  for(auto &p : h) {
-    int cur = p.first;
-    int target = m-cur;
-
-    auto it = h.find(target);
-    if(h.end() == it) {
-      continue;
-    } else {
-      if(cur == target && it->second <= 1)
-        continue;
-
-      if(abs(cur-target) < diff) {
-        diff = abs(cur-target);
-        lo = cur < target ? cur : target;
-        hi = cur > target ? cur : target;
-      }
-    }
-  }
-
-  printf("Peter should buy books whose prices are %d and %d.\n\n", lo, hi);
+double func(double x) {
+  return p * (1.0 / exp(x)) + q * sin(x) + r * cos(x) + s * tan(x)
+        + t * x*x;
 }
 
 int main(void)
 {
-  while(sd(n) != EOF) {
-    h.clear();
-    repi(i, n) {
-      int p;
-      sd(p);
-      h[p]++;
-    }
-    sd(m);
+  while(scanf("%lf", &p) != EOF) {
+    scanf("%lf", &q);
+    scanf("%lf", &r);
+    scanf("%lf", &s);
+    scanf("%lf", &t);
+    scanf("%lf", &u);
 
-    sol();
+    double lo, hi, x, result;
+    lo = 0.0; hi = 1.0;
+
+    if(abs(func(lo) + u) < 0.00001) {
+      printf("%.4lf\n", lo);
+      continue;
+    }
+    if(abs(func(hi) + u) < 0.00001) {
+      printf("%.4lf\n", hi);
+      continue;
+    }
+
+    while(true){
+      x = (lo + hi) / 2;
+
+      if(x < 0.00001 || x > 0.99999) {
+        printf("No solution\n");
+        goto next;
+      }
+      result = func(x);
+
+      if(abs(result + u) < 0.00001) break;
+
+      if(result + u > 0) { 
+        // result is big. decrease result, or increase x.
+        lo = x;
+      } else {
+        hi = x;
+      }
+    }
+    printf("%.4lf\n", x);
+next:;
   }
-  
   return 0;
 }

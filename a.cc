@@ -40,36 +40,194 @@ typedef vector< pii > vii;
 
 //ios::sync_with_stdio(0); cin.tie(0);
 int row, col;
+bool is_b;
+string s;
+string buf;
+int idx;
+string ans;
 
-void remove_white_space() {
-  char c;
-  while(1) {
-    c = getchar();
+int b[202][202];
 
-    if(isalpha(c) || isdigit(c) || c == '#') {
-      break;
+void comp(int r, int r_size, int c, int c_size) {
+  bool has_1, has_0, has_both;
+  has_1 = has_0 = has_both = false;
+
+  for(int i = r; i < r + r_size; i++) {
+    for(int k = c; k < c + c_size; k++) {
+      if(b[i][k]) {
+        has_1 = true;
+      } else {
+        has_0 = true;
+      }
+
+      if(has_1 && has_0) {
+        has_both = true;
+        goto exit_loop;
+      }
     }
   }
-  ungetc(c, stdin);
+
+exit_loop:
+  if(has_both) {
+    // recursion
+    ans += 'D';
+    
+    int row_big_size;
+    int row_small_size;
+    int col_big_size;
+    int col_small_size;
+    
+    row_big_size = r_size / 2 + (r_size & 1);
+    row_small_size = r_size / 2;
+    col_big_size = c_size / 2 + (c_size & 1);
+    col_small_size = c_size / 2;
+
+    // top left
+    comp(r, row_big_size, c, col_big_size);
+    
+    // top right
+    if(col_small_size != 0) {
+      comp(r, row_big_size, c + col_big_size, col_small_size);
+    }
+    
+    // bottom left
+    if(row_small_size != 0) {
+      comp(r + row_big_size, row_small_size, c, col_big_size);
+    }
+    
+    // bottom right
+    if(row_small_size != 0 && col_small_size != 0) {
+      comp(r + row_big_size, row_small_size,
+          c + col_big_size, col_small_size);
+    }
+    
+  } else if(has_1) {
+    ans += 1 + '0';
+  } else {
+    assert(has_0);
+    ans += 0 + '0';
+  }
+}
+
+void comp() {
+
+  int idx = 0;
+  repi(i, row) {
+    repi(k, col) {
+      b[i][k] = s[idx++] - '0';
+    }
+  }
+
+  comp(0, row, 0, col);
+}
+
+
+void decomp(int r, int r_size, int c, int c_size) {
+  char kind = s[idx++];
+
+  // recursion
+  if(kind == 'D') {
+    int row_big_size;
+    int row_small_size;
+    int col_big_size;
+    int col_small_size;
+    
+    row_big_size = r_size / 2 + (r_size & 1);
+    row_small_size = r_size / 2;
+    col_big_size = c_size / 2 + (c_size & 1);
+    col_small_size = c_size / 2;
+
+    // top left
+    decomp(r, row_big_size, c, col_big_size);
+    
+    // top right
+    if(col_small_size != 0) {
+      decomp(r, row_big_size, c + col_big_size, col_small_size);
+    }
+    
+    // bottom left
+    if(row_small_size != 0) {
+      decomp(r + row_big_size, row_small_size, c, col_big_size);
+    }
+    
+    // bottom right
+    if(row_small_size != 0 && col_small_size != 0) {
+      decomp(r + row_big_size, row_small_size,
+          c + col_big_size, col_small_size);
+    }
+  } else {
+    assert(kind == '1' || kind == '0');
+    for(int i = r; i < r + r_size; i++) {
+      for(int k = c; k < c + c_size; k++) {
+        b[i][k] = (kind == '1');
+      }
+    }
+  }
+}
+
+void decomp() {
+  idx = 0;
+  decomp(0, row, 0, col);
+
+  repi(i, row) {
+    repi(k, col) {
+      ans += b[i][k] + '0';
+    }
+  }
+}
+
+bool is_next_case(string& s) {
+  if(s[0] == '#' || s[1] == ' ')
+    return true;
 }
 
 int main(void)
 {
-  char c;
-  while(c = getchar(), c != '#') {
-    sd(row); sd(col);
+  getline(cin, buf);
+  while(true) {
+    s.clear();
+    ans.clear();
+    SET(b,0);
+    row = col = 0;
+
+    if(buf[0] == '#')
+      break;
+
+    assert(buf[1] == ' ');
+
+    is_b = buf[0] == 'B';
+
+    stringstream ss(buf.substr(1));
+    ss >> row >> col;
     
-    if(c == 'B') {
+    // get input
+    while(1) {
+      getline(cin, buf);
+      if(is_next_case(buf))
+        break;
 
-    } else {
-      assert(c == 'D');
-
-
-
+      s += buf;
     }
 
-    remove_white_space();
+    // trace4(is_b, row, col, s);
+
+    printf("%c %3d %3d\n", is_b ? 'D' : 'B', row, col);
+
+    if(is_b) {
+      comp();
+    } else {
+      decomp();
+    }
+
+    repi(i, ans.size()) {
+      if(i > 0 && i % 50 == 0) {
+        putchar('\n');
+      }
+      putchar(ans[i]);
+    }
+    putchar('\n');
   }
+
 
   return 0;
 }

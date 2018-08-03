@@ -39,56 +39,36 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 
 //ios::sync_with_stdio(0); cin.tie(0);
-int lad[100005];
-int n;
+int row, col;
 
+void remove_white_space() {
+  char c;
+  while(1) {
+    c = getchar();
 
-bool sol(int k) {
-  // groud to first rung
-  if(lad[0] > k) return false;
-
-  if(lad[0] == k) {
-    k--;
+    if(isalpha(c) || isdigit(c) || c == '#') {
+      break;
+    }
   }
-
-  for(int i = 1; i < n; i++) {
-    int dist = lad[i] - lad[i-1];
-
-    if(dist > k) return false;
-
-    if(dist == k) k--;
-  }
-
-  return true;
+  ungetc(c, stdin);
 }
 
 int main(void)
 {
-  int TC;
-  sd(TC);
-  for(int t = 1; t <= TC; t++) {
-    SET(lad, 0);
-
-    sd(n);
-    repi(i, n) {
-      sd(lad[i]);
-    }
-
-    int min = 1, max = 10000000;
-    int mid;
-    int ans;
-
-    while(min <= max) {
-      mid = (min + max) / 2;
-      if(sol(mid)) {
-        ans = mid;
-        max = mid - 1;
-      } else {
-        min = mid + 1;
-      }
-    }
+  char c;
+  while(c = getchar(), c != '#') {
+    sd(row); sd(col);
     
-    printf("Case %d: %d\n", t, ans);
+    if(c == 'B') {
+
+    } else {
+      assert(c == 'D');
+
+
+
+    }
+
+    remove_white_space();
   }
 
   return 0;

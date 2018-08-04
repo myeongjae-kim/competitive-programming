@@ -38,31 +38,54 @@ typedef pair<int,int> pii;
 typedef vector<int> vi;
 typedef vector< pii > vii;
 
+inline void implant(string &s, int i, int &ans) {
+  s[i-1] = s[i] = s[i+1] = '#';
+  ans++;
+}
+
 //ios::sync_with_stdio(0); cin.tie(0);
 int main(void)
 {
-  int n, d, r, ans;
-  int m[102], e[102];
-  while(sd(n), sd(d), sd(r), n || d || r) {
-    ans = 0;
-    SET(m, 0); SET(e, 0);
-    repi(i, n) {
-      sd(m[i]);
-    }
-    repi(i, n) {
-      sd(e[i]);
-    }
+  int TC; cin >> TC;
 
-    sort(m, m+n);
-    sort(e, e+n, [](int a, int b) {return a > b;});
+  string s;
+  for (int tc = 1; tc <= TC; ++tc) {
+    int n, ans = 0; cin >> n;
+    s.clear(); cin >> s;
 
-    repi(i, n) {
-      m[i] += e[i];
-      if(m[i] - d > 0) {
-        ans += m[i] - d;
+    if(n == 1) {
+      if(s[0] == '.') ans++;
+    } else if (n == 2) {
+      if(s[0] == '.' || s[1] == '.') ans++;
+    } else {
+      for(int i = 1; i < n - 1; i++) {
+        // . is 1, # is 0.
+        int n_case = 0;
+        n_case += s[i-1] == '.' ? 0b100 : 0;
+        n_case += s[ i ] == '.' ? 0b010 : 0;
+        n_case += s[i+1] == '.' ? 0b001 : 0;
+
+        switch(n_case) {
+          case 0b000:
+            // no fertile land
+            break;
+          case 0b001:
+          case 0b010:
+          case 0b011:
+            if(i + 1 == n - 1) {
+              implant(s, i, ans);
+            }
+            break;
+          case 0b100:
+          case 0b101:
+          case 0b110:
+          case 0b111:
+            implant(s, i, ans);
+            break;
+        }
       }
     }
 
-    printf("%d\n", ans * r);
+    printf("Case %d: %d\n", tc, ans);
   }
 }

@@ -41,21 +41,38 @@ typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 int main(void)
 {
-  int TC; cin >> TC;
-
-  string s;
-  for (int tc = 1; tc <= TC; ++tc) {
-    int n, ans = 0; cin >> n;
-    s.clear(); cin >> s;
+  int n;
+  while(sd(n), n) {
+    vi v(n);
 
     repi(i, n) {
-      if(s[i] == '.') {
-        // place scarecrow at (i+1)
-        i += 2;
-        ans++;
-      }
+      sd(v[i]);
     }
 
-    printf("Case %d: %d\n", tc, ans);
+    sortv(v);
+
+    // get maximum count of a number
+    int cnt = 1, max_cnt = 1;
+    for(int i = 1; i < n; i++) {
+      if(v[i] == v[i-1]) {
+        cnt++;
+      } else {
+        max_cnt = max(cnt, max_cnt);
+        cnt = 1;
+      }
+    }
+    max_cnt = max(cnt, max_cnt);
+
+    // Below code is slow because it jumps memory space at every printing.
+    // Using two dimentional vector 'ans' will be better choice.  (Cache locality)
+    printf("%d\n", max_cnt);
+    repi(i, max_cnt) {
+      printf("%d", v[i]);
+      for(int k = i+max_cnt; k < n; k += max_cnt) {
+        printf(" %d", v[k]);
+      }
+      putchar('\n');
+    }
+    putchar('\n');
   }
 }

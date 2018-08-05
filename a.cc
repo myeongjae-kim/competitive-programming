@@ -38,41 +38,45 @@ typedef pair<int,int> pii;
 typedef vector<int> vi;
 typedef vector< pii > vii;
 
+int n, m;
+int d[20004];
+int k[20004];
+
 //ios::sync_with_stdio(0); cin.tie(0);
 int main(void)
 {
-  int n;
-  while(sd(n), n) {
-    vi v(n);
-
+  while(sd(n), sd(m), n || m) {
     repi(i, n) {
-      sd(v[i]);
+      sd(d[i]);
     }
 
-    sortv(v);
-
-    // get maximum count of a number
-    int cnt = 1, max_cnt = 1;
-    for(int i = 1; i < n; i++) {
-      if(v[i] == v[i-1]) {
-        cnt++;
-      } else {
-        max_cnt = max(cnt, max_cnt);
-        cnt = 1;
-      }
+    repi(i, m) {
+      sd(k[i]);
     }
-    max_cnt = max(cnt, max_cnt);
 
-    // Below code is slow because it jumps memory space at every printing.
-    // Using two dimentional vector 'ans' will be better choice.  (Cache locality)
-    printf("%d\n", max_cnt);
-    repi(i, max_cnt) {
-      printf("%d", v[i]);
-      for(int k = i+max_cnt; k < n; k += max_cnt) {
-        printf(" %d", v[k]);
-      }
-      putchar('\n');
+    sort(d, d+n);
+    sort(k, k+m);
+
+    int ans = 0;
+    int d_idx = 0, k_idx = 0;
+
+    while(d_idx < n && k_idx < m) {
+      while(d[d_idx] > k[k_idx] && k_idx < m)
+        k_idx++;
+
+      if(k_idx == m) 
+        break;
+      
+
+      ans += k[k_idx];
+
+      d_idx++;
+      k_idx++;
     }
-    putchar('\n');
+
+    if(d_idx == n)
+      printf("%d\n", ans);
+    else
+      printf("Loowater is doomed!\n");
   }
 }

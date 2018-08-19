@@ -39,36 +39,30 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
-int rszie, csize;
+int r_size, c_size;
 int r[12], c[12]; // idx 0 is start point
 int n;
 int adj[12][12];
-int memo[12][1 << 12]; // number of problem states is n*(2^n)
 
 int get_dist(int from, int to) {
   return abs(r[from] - r[to]) + abs(c[from] - c[to]);
 }
 
-int sol(int last, int visited) {
-  if(visited == (1 << n) - 1) return adj[last][0];
-  if(memo[last][visited] != -1) return memo[last][visited];
-
-  int ans = INT_MAX;
-  repi(i, n) { // O(n) to calculate one state
-    int next = 1 << i;
-    if((visited & next) == 0) {
-      ans = min(ans, adj[last][i] + sol(i, visited | next));
-    }
+int get_path_length(vi &v) {
+  int sum = 0;
+  for(int i = 1; i < (int)v.size(); i++) {
+    sum += adj[v[i]][v[i-1]];
   }
+  sum += adj[v.front()][v.back()];
 
-  return memo[last][visited] = ans;
+  return sum;
 }
 
 int main(void)
 {
   int TC; sd(TC);
   while(TC--) {
-    sd(rszie); sd(csize);
+    sd(r_size); sd(c_size);
     sd(r[0]); sd(c[0]);
     sd(n);
     repi(i, n) {
@@ -77,7 +71,6 @@ int main(void)
     n++;
 
     SET(adj, 0);
-    SET(memo, -1);
     repi(i, n) {
       for(int k = i+1; k < n; k++) {
         adj[i][k] = get_dist(i, k);
@@ -90,7 +83,13 @@ int main(void)
       seq[i] = i;
     }
 
-    printf("The shortest path has length %d\n", sol(0, 1));
+    int ans = INT_MAX;
+
+    do {
+      ans = min(ans, get_path_length(seq));
+    } while(next_permutation(seq.begin() + 1, seq.end()));
+  
+    printf("The shortest path has length %d\n", ans);
   }
 
   return 0;

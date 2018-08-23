@@ -78,15 +78,16 @@ int main(void)
           // one floor
           local_ans += ary[i][x][y];
           if(k>0) local_ans -= ary[i][k-1][y];
-          if(l>0) local_ans -= ary[i][k][y-1];
-          if(k>0&&l>0) local_ans += ary[i][k-1][y-1];
+          if(l>0) local_ans -= ary[i][x][l-1];
+          if(k>0&&l>0) local_ans += ary[i][k-1][l-1];
 
           ans = max(ans, local_ans);
           if(local_ans < 0) local_ans = 0;
         }
       }
     }
-    printf("%lld\n\n", ans);
+    printf("%lld\n", ans);
+    if(TC != 0) putchar('\n');
   }
   return 0;
 }

@@ -48,9 +48,9 @@ int main(void)
     repi(i, n)
       sd(v[i]);
 
-    lis[n-1] = 1;
+    int buf;
 
-    int buf = 0;
+    lis[n-1] = 1;
     for(int i = n-2; i >= 0; i--) {
       buf = 0;
       for(int k = n-1; k > i; k--) {
@@ -80,6 +80,7 @@ int main(void)
 
     printf("%d\n", ans);
   }
+  
   
   return 0;
 }

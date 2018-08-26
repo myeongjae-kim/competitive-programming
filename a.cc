@@ -51,23 +51,10 @@ int sol() {
     auto it = lower_bound(L.begin(), L.end(), v[i]);
     if(it != L.end()) {
       // find the idx of the iterator
-      int j = 0, k = SZ(L) - 1, mid;
-      auto it_mid = L.begin();
-
-      while(j <= k) {
-        mid = (j+k)/2;
-        it_mid = L.begin() + mid;
-        if(it == it_mid) break;
-        else if(it > it_mid) {
-          j = mid + 1;
-        } else {
-          k = mid - 1;
-        }
-      }
-      // assert(it_mid == it);
+      int idx = it - L.begin();
 
       *it = v[i];
-      LIS[i] = mid + 1;
+      LIS[i] = idx + 1;
     } else {
       L.pb(v[i]);
       LIS[i] = SZ(L);

@@ -39,60 +39,36 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
-int n;
-vi h, w, lis, lds;
+int n, v[102], memo[50004][102];
+
+int sol(int idx, int a, int b) {
+  if(memo[a][idx] != -1)
+    return memo[a][idx];
+
+  if(a < 0)
+    return INT_MAX;
+
+  if(idx == n)
+    return abs(a-b);
+
+  return memo[a][idx] = min(sol(idx+1, a, b),sol(idx+1, a-v[idx], b+v[idx]));
+}
 
 int main(void)
 {
-  int TC; sd(TC);
-  for (int tc = 1; tc <= TC; ++tc) {
+  DRT(){
+    int sum = 0;
     sd(n);
-    h.clear(); w.clear(); lis.clear(); lds.clear();
-    h.resize(n); w.resize(n); lis.resize(n); lds.resize(n);
+    repi(i, n)  {
+      sd(v[i]);
+      sum += v[i];
+    }
 
-    repi(i, n) 
-      sd(h[i]);
+    SET(memo, -1);
     
-    repi(i, n) 
-      sd(w[i]);
-
-    // lis
-    int lis_max = 0;
-    lis[0] = w[0];
-    lis_max = max(lis[0], lis_max);
-    for(int i = 1; i < n; i++) {
-      int ibuf = 0;
-      for(int k = 0; k < i; k++) {
-        if(h[k] < h[i]) {
-          ibuf = max(ibuf, lis[k]);
-        }
-      }
-      lis[i] = ibuf + w[i];
-      lis_max = max(lis[i], lis_max);
-    }
-
-    // lds
-    int lds_max = 0;
-    lds[0] = w[0];
-    lds_max = max(lds[0], lds_max);
-    for(int i = 1; i < n; i++) {
-      int ibuf = 0;
-      for(int k = 0; k < i; k++) {
-        if(h[k] > h[i]) {
-          ibuf = max(ibuf, lds[k]);
-        }
-      }
-      lds[i] = ibuf + w[i];
-      lds_max = max(lds[i], lds_max);
-    }
-
-    printf("Case %d. ", tc);
-    if(lis_max >= lds_max) {
-      printf("Increasing (%d). Decreasing (%d).\n", lis_max, lds_max);
-    } else {
-      printf("Decreasing (%d). Increasing (%d).\n", lds_max, lis_max);
-    }
+    printf("%d\n", sol(0, sum, 0));
   }
   
   return 0;
 }
+

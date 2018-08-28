@@ -40,47 +40,20 @@ typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
 static int t, w, n, d[31], v[31], rt[31], memo[31][1003];
-bool get_gold[31][1003];
 
 int sol(const int idx, const int time) {
-  if(time < 0) {
-    return INT_MIN;
-  }
-      
-  if(idx == n) {
+  if(time < 0 || idx == n)
     return 0;
-  }
 
   if(memo[idx][time] != -1)
     return memo[idx][time];
 
-  int ans1 = sol(idx+1, time);
-  int ans2 = v[idx] + sol(idx+1, time - rt[idx]);
-
-  // for tracing
-  if(ans2 > ans1)
-    get_gold[idx][time] = true;
-
-  return memo[idx][time] = max(ans1, ans2);
-}
-
-vi find_path(int idx, int time) {
-  vi ans;
-
-  while(idx < n && time > 0) {
-    if(get_gold[idx][time] == true) {
-      ans.pb(idx);
-      time -= rt[idx];
-    }
-    idx++;
-  }
-
-  return ans;
+  return memo[idx][time] =
+    max(sol(idx+1, time), v[idx] + sol(idx+1, time - rt[idx]));
 }
 
 int main(void)
 {
-  bool is_first = true;
   while(scanf("%d %d", &t, &w) != EOF) {
     sd(n);
     repi(i,n) {
@@ -89,19 +62,8 @@ int main(void)
     }
 
     SET(memo, -1);
-    SET(get_gold, 0);
-
-    if(is_first) is_first = false;
-    else putchar('\n');
 
     printf("%d\n", sol(0, t));
-
-    vi && way = find_path(0, t);
-
-    printf("%d\n", SZ(way));
-    for(auto i : way) {
-      printf("%d %d\n", d[i], v[i]);
-    }
   }
 
   return 0;

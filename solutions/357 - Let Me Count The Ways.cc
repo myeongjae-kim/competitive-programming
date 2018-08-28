@@ -39,32 +39,40 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
-static int t, w, n, d[31], v[31], rt[31], memo[31][1003];
+int c[5] = {1, 5, 10, 25, 50};
+long memo[30004][6]; // [left money][index]
 
-int sol(const int idx, const int time) {
-  if(time < 0 || idx == n)
+long sol(int n, int idx) {
+  if(n == 0)
+    return 1;
+
+  if(n < 0 || idx == 5)
     return 0;
 
-  if(memo[idx][time] != -1)
-    return memo[idx][time];
+  if(memo[n][idx] != -1)
+    return memo[n][idx];
 
-  return memo[idx][time] =
-    max(sol(idx+1, time), v[idx] + sol(idx+1, time - rt[idx]));
+  long ans = 0;
+  for(int i = idx; i < 5; i++) {
+    ans += sol(n-c[i], i);
+  }
+
+  return memo[n][idx] = ans;
 }
 
 int main(void)
 {
-  while(scanf("%d %d", &t, &w) != EOF) {
-    sd(n);
-    repi(i,n) {
-      scanf("%d %d", d+i, v+i);
-      rt[i] = d[i] * 3 * w; // array rt(required time) is total times to get each gold.
+  int n;
+  SET(memo, -1);
+  while(sd(n) != EOF) {
+    // SET(memo, -1); // Do not reset memo. It makes TLE.
+    long ways = sol(n,0);
+    if(ways == 1) {
+      printf("There is only %ld way to produce %d cents change.\n", ways, n);
+    } else {
+      printf("There are %ld ways to produce %d cents change.\n", ways, n);
     }
-
-    SET(memo, -1);
-
-    printf("%d\n", sol(0, t));
   }
-
+  
   return 0;
 }

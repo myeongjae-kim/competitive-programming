@@ -39,48 +39,40 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
-vi primes;
+int c[5] = {1, 5, 10, 25, 50};
+long memo[30004][6]; // [left money][index]
 
-void init() {
-  primes.pb(2);
-  primes.pb(3);
-  for(int i = 5; i <= 1120; i += 2) {
-    bool is_prime = true;
-    for(auto k : primes) {
-      if(k > (int)sqrt(i) + 1) break;
-
-      if(i % k == 0){
-        is_prime = false;
-        break;
-      }
-    }
-    if(is_prime) primes.pb(i);
-  }
-}
-
-int memo[1200][16][200];
-
-int sol(int n, int k, int idx) {
-  if(memo[n][k][idx] != -1)
-    return memo[n][k][idx];
-
-  if(n == 0 && k == 0)
+long sol(int n, int idx) {
+  if(n == 0)
     return 1;
 
-  if(n<0||k<=0||n<primes[idx]||idx==SZ(primes))
+  if(n < 0 || idx == 5)
     return 0;
 
-  return memo[n][k][idx] = sol(n,k,idx+1) + sol(n-primes[idx],k-1,idx+1);
+  if(memo[n][idx] != -1)
+    return memo[n][idx];
+
+  long ans = 0;
+  for(int i = idx; i < 5; i++) {
+    ans += sol(n-c[i], i);
+  }
+
+  return memo[n][idx] = ans;
 }
 
 int main(void)
 {
-  init();
+  int n;
   SET(memo, -1);
-
-  int n, k;
-  while(scanf("%d %d", &n, &k), n||k) {
-    printf("%d\n", sol(n,k,0));
+  while(sd(n) != EOF) {
+    // SET(memo, -1); // Do not reset memo. It makes TLE.
+    long ways = sol(n,0);
+    if(ways == 1) {
+      printf("There is only %ld way to produce %d cents change.\n", ways, n);
+    } else {
+      printf("There are %ld ways to produce %d cents change.\n", ways, n);
+    }
   }
+  
   return 0;
 }

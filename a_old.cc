@@ -39,12 +39,12 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 
-static int R,C,M,N, ans[2]; // idx 0 is even answer, and idx 1 is odd answer.
+static int R,C,M,N, even, odd;
 
 static int mr[8], mc[8]; // move row, move col;
 
-static vector< vector<bool> > water;
-static vector< vector<bool> > visited;
+static bool water[102][102];
+static bool visited[102][102];
 
 static void sol(const int r, const int c) {
   if( !(0 <= r && r < R && 0 <= c && c < C)
@@ -55,7 +55,7 @@ static void sol(const int r, const int c) {
 
   int cnt = 0;
   //count movable lands
-  set< pii > counted;
+  map<int, bool> counted;
 
   repi(i, 8) {
     int nr, nc;
@@ -64,14 +64,17 @@ static void sol(const int r, const int c) {
   
     if( (0 <= nr && nr < R && 0 <= nc && nc < C)
         && water[nr][nc] == false
-        && counted.find(make_pair(nr, nc)) == counted.end()) {
+        && counted[nr * 100 + nc] == false) {
       cnt++;
-      counted.insert(make_pair(nr, nc));
+      counted[nr * 100 + nc] = true;
       sol(nr, nc);
     }
   }
 
-  ans[cnt&1]++;
+  if(cnt & 1) odd++;
+  else even++;
+
+  // printf("%s: %d, %d\n",(cnt&1) ? "odd" : "eve", r, c);
 }
 
 int main(void)
@@ -79,19 +82,18 @@ int main(void)
   int TC; sd(TC);
 
   for(int tc = 1; tc <= TC; tc++) {
-    SET(ans, 0);
+    even = odd = 0;
     sd(R); sd(C); sd(M); sd(N);
+    SET(water, 0);
+    SET(visited, 0);
 
-    water.assign(102, vector<bool>(102, false));
-    visited.assign(102, vector<bool>(102, false));
-
-    mr[0] =  M; mc[0] =  N;
-    mr[1] =  M; mc[1] = -N;
-    mr[2] = -M; mc[2] =  N;
+    mr[0] = M; mc[0] = N;
+    mr[1] = M; mc[1] = -N;
+    mr[2] = -M; mc[2] = N;
     mr[3] = -M; mc[3] = -N;
-    mr[4] =  N; mc[4] =  M;
-    mr[5] =  N; mc[5] = -M;
-    mr[6] = -N; mc[6] =  M;
+    mr[4] = N; mc[4] = M;
+    mr[5] = N; mc[5] = -M;
+    mr[6] = -N; mc[6] = M;
     mr[7] = -N; mc[7] = -M;
 
     DRT() {
@@ -101,7 +103,7 @@ int main(void)
 
     sol(0,0);
   
-    printf("Case %d: %d %d\n", tc, ans[0], ans[1]);
+    printf("Case %d: %d %d\n", tc, even, odd);
   }
   
   return 0;

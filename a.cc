@@ -41,60 +41,86 @@ typedef vector< pii > vii;
 //ios::sync_with_stdio(0); cin.tie(0);
 // Use static and const for every function.
 
-static int n, m;
+static int N, M;
+
+static string input[102];
+static unordered_map<string, int> m;
+
 static vector<int> g[102];
-static bool vis[102];
+static int indegree[102];
 
 static vector<int> ans;
+static vector<bool> visited;
 
-static void sol(const int u) {
-  if(vis[u])
-    return;
+void sol() {
+  // In the case there is no relation between two beverages
+  // Dilbert should start drinking the one that appears first in the input.
+  priority_queue<int, vector<int>, greater<int> > q;
 
-  vis[u] = true;
-
-  if(g[u].empty()) {
-    ans.pb(u);
-    return;
-  }
-
-  for(auto i : g[u]) {
-    sol(i);
-  }
-  ans.pb(u);
-}
-
-static void sol() {
-  repi(i, n) {
-    if(vis[i+1] == false) {
-      sol(i+1);
+  repi(i, N) {
+    if(indegree[i] == 0) {
+      q.push(i);
     }
   }
+
+  while(!q.empty()) {
+    int i = q.top();
+    q.pop();
+
+    ans.pb(i);
+
+    for(auto k : g[i]) {
+      indegree[k]--;
+
+      if(indegree[k] == 0)
+        q.push(k);
+    }
+  }
+
 }
 
 int main(void)
 {
-  while(sd(n), sd(m), n||m) {
-    repi(i, n) {
+  string s, u, v;
+  int TC = 1;
+
+  while(sd(N) != EOF) {
+    getline(cin, s); // remove line break;
+
+    repi(i, N) {
+      getline(cin, input[i]);
+      m[input[i]] = i;
+
       g[i].clear();
     }
-    SET(vis, 0);
-    ans.clear();
 
-    int u,v;
-    
-    repi(i, m) {
-      sd(u), sd(v);
-      g[u].pb(v);
+    sd(M);
+    getline(cin, s); // remove line break;
+
+    SET(indegree, 0);
+    repi(i, M) {
+      getline(cin, s);
+      int idx = s.find(" ");
+      u = s.substr(0, idx);
+      v = s.substr(idx+1);
+
+      g[m[u]].pb(m[v]);
+      indegree[m[v]]++;
     }
+
+    ans.clear();
+    visited.assign(N, false);
     sol();
 
-    auto it = ans.rbegin();
-    printf("%d", *it);
-    for(it++;it != ans.rend(); it++) 
-      printf(" %d", *it);
-    puts("");
+    cout << "Case #" << TC++ <<": Dilbert should drink beverages in this order: ";
+
+    auto it = ans.begin();
+    cout << input[*it];
+    for(it++; it != ans.end(); it++) {
+      cout << ' ' << input[*it];
+    }
+    cout << "." << endl << endl;
   }
-  
+
   return 0;
 }

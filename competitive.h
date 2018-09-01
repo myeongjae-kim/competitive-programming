@@ -39,3 +39,4 @@ typedef vector<int> vi;
 typedef vector< pii > vii;
 
 //ios::sync_with_stdio(0); cin.tie(0);
+// Use static and const for every function.

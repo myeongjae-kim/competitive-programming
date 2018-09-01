@@ -1,4 +1,13 @@
-a b f g
-a b b f
-v w x y z
-v y x v z v w v
+4
+
+A B C
+A<B B<C C<A
+
+A B
+A<B B<A
+
+A B F G
+A<B B<F
+
+A B C D E F
+B<A A<D F<D D<E

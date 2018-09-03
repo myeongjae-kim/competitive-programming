@@ -37,75 +37,88 @@ typedef long long ll;
 typedef pair<int,int> pii;
 typedef vector<int> vi;
 typedef vector< pii > vii;
+typedef vector<bool> vb;
+
 //ios::sync_with_stdio(0); cin.tie(0);
+// Use static and const for every function.
 
-static int R,C,M,N, even, odd;
+static int n;
+static vii g[102];
 
-static int mr[8], mc[8]; // move row, move col;
+// If a root has more than one child, it is an articulation vertex.
+static int dfsNumCnt, rootChildren, dfsRoot;
 
-static bool water[102][102];
-static bool visited[102][102];
+// parent is for finding back edge which is not a direct edge to its parent.
+static vi dfs_parent, dfs_num, dfs_low;
 
-static void sol(const int r, const int c) {
-  if( !(0 <= r && r < R && 0 <= c && c < C)
-      || visited[r][c] || water[r][c])
-    return;
+static vector<bool> is_articulation_vertex;
 
-  visited[r][c] = true;
+static void sol(const int u) {
+  dfs_low[u] = dfs_num[u] = dfsNumCnt++;
+  for(auto &v : g[u]) {
+    if(dfs_num[v.first] == -1) {
+      dfs_parent[v.first] = u;
+      if(u == dfsRoot) rootChildren++;
 
-  int cnt = 0;
-  //count movable lands
-  map<int, bool> counted;
+      sol(v.first);
 
-  repi(i, 8) {
-    int nr, nc;
-    nr = r + mr[i];
-    nc = c + mc[i];
-  
-    if( (0 <= nr && nr < R && 0 <= nc && nc < C)
-        && water[nr][nc] == false
-        && counted[nr * 100 + nc] == false) {
-      cnt++;
-      counted[nr * 100 + nc] = true;
-      sol(nr, nc);
+      if(dfs_low[v.first] >= dfs_num[u])
+        is_articulation_vertex[u] = true;
+
+      dfs_low[u] = min(dfs_low[u], dfs_low[v.first]);
+    } else if (v.first != dfs_parent[u])
+      dfs_low[u] = min(dfs_low[u], dfs_num[v.first]);
+  }
+}
+
+static int sol() {
+  repi(i, n) {
+    if(dfs_num[i] == -1) {
+      dfsRoot = i; rootChildren = 0;
+      sol(i);
+      is_articulation_vertex[dfsRoot] = (rootChildren > 1);
     }
   }
 
-  if(cnt & 1) odd++;
-  else even++;
+  int cnt = 0;
+  for(auto i : is_articulation_vertex)
+    cnt += i;
 
-  // printf("%s: %d, %d\n",(cnt&1) ? "odd" : "eve", r, c);
+  return cnt;
 }
 
 int main(void)
 {
-  int TC; sd(TC);
+  string s;
+  while(getline(cin, s), s[0] != '0') {
+    sscanf(s.c_str(), "%d", &n);
+    repi(i, n)
+      g[i].clear();
+    dfs_parent.assign(n, -1);
+    dfs_num.assign(n, -1);
+    dfs_low.assign(n, -1);
+    is_articulation_vertex.assign(n, false);
 
-  for(int tc = 1; tc <= TC; tc++) {
-    even = odd = 0;
-    sd(R); sd(C); sd(M); sd(N);
-    SET(water, 0);
-    SET(visited, 0);
+    dfsNumCnt = rootChildren = 0;
 
-    mr[0] = M; mc[0] = N;
-    mr[1] = M; mc[1] = -N;
-    mr[2] = -M; mc[2] = N;
-    mr[3] = -M; mc[3] = -N;
-    mr[4] = N; mc[4] = M;
-    mr[5] = N; mc[5] = -M;
-    mr[6] = -N; mc[6] = M;
-    mr[7] = -N; mc[7] = -M;
-
-    DRT() {
-      int r, c; sd(r); sd(c);
-      water[r][c] = true;
+    while(getline(cin, s), s[0] != '0') {
+      stringstream ss(s);
+      int u,v;
+      ss >> u; u--;
+      while(ss>>v) {
+        v--;
+        g[u].pb(mp(v, 0));
+        g[v].pb(mp(u, 0));
+      }
     }
-
-    sol(0,0);
-  
-    printf("Case %d: %d %d\n", tc, even, odd);
+    /* trace1(n);
+     * repi(i, n) {
+     *   for(auto &p : g[i]) {
+     *     trace3(i, p.first, p.second);
+     *   }
+     * } */
+    printf("%d\n", sol());
   }
   
   return 0;
 }
-

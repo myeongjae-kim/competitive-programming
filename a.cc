@@ -37,62 +37,87 @@ typedef long long ll;
 typedef pair<int,int> pii;
 typedef vector<int> vi;
 typedef vector< pii > vii;
+typedef vector<bool> vb;
 
 //ios::sync_with_stdio(0); cin.tie(0);
 // Use static and const for every function.
+
 static int n;
-static vector<int> g[302];
-static int c[302];
+static vii g[102];
 
-static bool sol(const int i) {
-  queue<int> q;
-  q.push(i);
-  c[i] = 0;
+// If a root has more than one child, it is an articulation vertex.
+static int dfsNumCnt, rootChildren, dfsRoot;
 
-  while(!q.empty()) {
-    int u;
-    u = q.front(); q.pop();
+// parent is for finding back edge which is not a direct edge to its parent.
+static vi dfs_parent, dfs_num, dfs_low;
 
-    for(auto v : g[u]) {
-      if(c[u] == c[v])
-        return false;
-      else if (c[v] == -1) {
-        c[v] = 1-c[u];
-        q.push(v);
-      }
-    }
+static vector<bool> is_articulation_vertex;
+
+static void sol(const int u) {
+  dfs_low[u] = dfs_num[u] = dfsNumCnt++;
+  for(auto &v : g[u]) {
+    if(dfs_num[v.first] == -1) {
+      dfs_parent[v.first] = u;
+      if(u == dfsRoot) rootChildren++;
+
+      sol(v.first);
+
+      if(dfs_low[v.first] >= dfs_num[u])
+        is_articulation_vertex[u] = true;
+
+      dfs_low[u] = min(dfs_low[u], dfs_low[v.first]);
+    } else if (v.first != dfs_parent[u])
+      dfs_low[u] = min(dfs_low[u], dfs_num[v.first]);
   }
-
-  return true;
 }
 
-static bool sol() {
+static int sol() {
   repi(i, n) {
-    if(c[i] == -1) {
-      if(sol(i) == false)
-        return false;
+    if(dfs_num[i] == -1) {
+      dfsRoot = i; rootChildren = 0;
+      sol(i);
+      is_articulation_vertex[dfsRoot] = (rootChildren > 1);
     }
   }
 
-  return true;
+  int cnt = 0;
+  for(auto i : is_articulation_vertex)
+    cnt += i;
+
+  return cnt;
 }
 
 int main(void)
 {
-  while(sd(n), n) {
-    int u,v;
-
+  string s;
+  while(getline(cin, s), s[0] != '0') {
+    sscanf(s.c_str(), "%d", &n);
     repi(i, n)
       g[i].clear();
+    dfs_parent.assign(n, -1);
+    dfs_num.assign(n, -1);
+    dfs_low.assign(n, -1);
+    is_articulation_vertex.assign(n, false);
 
-    SET(c, -1);
+    dfsNumCnt = rootChildren = 0;
 
-    while(sd(u), sd(v), u||v) {
-      u--; v--;
-      g[u].pb(v);
-      g[v].pb(u);
+    while(getline(cin, s), s[0] != '0') {
+      stringstream ss(s);
+      int u,v;
+      ss >> u; u--;
+      while(ss>>v) {
+        v--;
+        g[u].pb(mp(v, 0));
+        g[v].pb(mp(u, 0));
+      }
     }
-    printf("%s\n", sol() ? "YES" : "NO");
+    /* trace1(n);
+     * repi(i, n) {
+     *   for(auto &p : g[i]) {
+     *     trace3(i, p.first, p.second);
+     *   }
+     * } */
+    printf("%d\n", sol());
   }
   
   return 0;

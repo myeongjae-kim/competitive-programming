@@ -37,6 +37,7 @@ typedef long long ll;
 typedef pair<int,int> pii;
 typedef vector<int> vi;
 typedef vector< pii > vii;
+typedef vector<bool> vb;
 
 //ios::sync_with_stdio(0); cin.tie(0);
 // Use static and const for every function.

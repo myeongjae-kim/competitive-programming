@@ -63,10 +63,9 @@ static void sol(const int u) {
         ans.pb(mp(from, to));
       }
     
-      dfs_low[u] = min(dfs_low[v.first], dfs_low[u]);
+      dfs_low[u] = min(dfs_low[u], dfs_low[v.first]);
     } else if (v.first != dfs_parent[u]) {
-      // dfs_low[u] = min(dfs_low[v.first], dfs_num[u]);
-      dfs_low[u] = min(dfs_low[v.first], dfs_low[u]);
+      dfs_low[u] = min(dfs_low[u], dfs_num[v.first]);
     }
   }
 }
@@ -79,6 +78,10 @@ static void sol() {
   }
 
   sort(all(ans));
+
+  /* repi(i, n) {
+   *   trace3(i, dfs_num[i], dfs_low[i]);
+   * } */
 }
 
 int main(void)

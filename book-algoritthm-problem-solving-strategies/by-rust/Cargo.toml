@@ -1,0 +1,9 @@
+[package]
+name = "by-rust"
+version = "0.1.0"
+authors = ["Myeongjae Kim 김명재 <dev@myeongjae.kim>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]

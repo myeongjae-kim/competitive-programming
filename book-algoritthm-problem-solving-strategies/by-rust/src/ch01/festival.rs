@@ -53,11 +53,12 @@ fn each_case() {
     for from in 1..(n + 1) {
         for to in l..(n + 1) {
             let days = to - (from - 1);
-            if (days < l) {
+            if days < l {
                 continue;
             }
 
-            let mut avg = (acc[to as usize] - acc[(from - 1) as usize]) as f64 / days as f64;
+            let avg = (acc[to as usize] - acc[(from - 1) as usize]) as f64
+                / days as f64;
             min = min.min(avg);
         }
     }

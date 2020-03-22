@@ -1,5 +1,3 @@
 mod ch01;
 
-fn main() {
-}
-
+fn main() {}
